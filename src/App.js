@@ -3,10 +3,16 @@ import logo from "./logo.svg";
 import "./App.css";
 import Cardlist from "./Cardlist";
 import * as firebase from "firebase";
+import Card from "@material-ui/core/Card";
 import "firebase/database";
+import { makeStyles } from "@material-ui/core/styles";
+import CardContent from "@material-ui/core/CardContent";
 import MessageList from "./MessageList";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 
 let app;
+let useStyles;
 class App extends Component {
   state = {
     firebasekey: {
@@ -35,27 +41,36 @@ class App extends Component {
     currentMessages: [],
     currentMessageInBox: "",
     app: null,
-    connected: false
+    connected: false,
+    feederScreen: false
   };
 
   render() {
+    const classes = this.useStyles();
+
     if (this.state.curr == 0) {
       this.addFeeder("Koda", 1, "berk", 15, true);
       this.addFeeder("Cooper", 2, "woosta", 13, true);
     }
     console.log(this.state.currentMessages);
-    if (this.state.viewMode) {
+    if (this.state.viewMode && !this.state.feederScreen) {
       return (
         <div>
-          <button>Become a feeder</button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.becomeaFeeder}
+          >
+            Become a feeder
+          </Button>
           <Cardlist
             feeders={this.state.feeders}
             onClick={this.join}
             join={this.join}
-          />
+          ></Cardlist>
         </div>
       );
-    } else {
+    } else if (!this.state.feederScreen) {
       console.log(this.state.currentElem);
       console.log();
       /*{this.state.currentMessages}*/
@@ -67,10 +82,13 @@ class App extends Component {
             {this.state.feeders[this.state.currentElem].name}
           </h1>
           <React.Fragment>
+            <Card className={classes.card}>
+              <CardContent>woof</CardContent>
+            </Card>
             <ul id="messageArea">
               <MessageList messages={this.state.currentMessages} />{" "}
             </ul>
-            <input
+            <TextField
               type="text"
               //onChange={this.props.onChange}
               name="name"
@@ -81,20 +99,27 @@ class App extends Component {
               onChange={this.userChange}
             />
             <label for="nme">
-              <span>message</span>
+              <span></span>
             </label>
-            <button
+            <Button
+              variant="contained"
+              color="primary"
               onClick={() =>
                 this.sendMessage(
                   this.state.currentElem,
                   this.state.currentMessageInBox
                 )
               }
-              class="btn btn-outline-secondary"
             >
               send
-            </button>
+            </Button>
           </React.Fragment>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h1>Welcome to the feeder Screen</h1>
         </div>
       );
     }
@@ -188,7 +213,30 @@ class App extends Component {
     this.setState({ currentMessageInBox: value });
   };
 
-  formatMessages = () => {};
+  //formatMessages = () => {};
+  becomeaFeeder = () => {
+    let feederScreen = true;
+    this.setState({ feederScreen });
+  };
+
+  useStyles = () => {
+    return makeStyles({
+      card: {
+        minWidth: 275
+      },
+      bullet: {
+        display: "inline-block",
+        margin: "0 2px",
+        transform: "scale(0.8)"
+      },
+      title: {
+        fontSize: 14
+      },
+      pos: {
+        marginBottom: 12
+      }
+    });
+  };
 }
 
 export default App;
