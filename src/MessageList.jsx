@@ -20,9 +20,10 @@ class MessageList extends Component {
             key={c}
             id={c}
             Message={Message}
+            senderName={this.props.messages[c].senderName}
             //   onChange={this.props.onChange}
             //   value={this.props.value}
-            name={this.props.messages[c]}
+            name={this.props.messages[c].message}
             //   status={this.props.stocks[c].status}
             //   delete={this.props.delete}
             //   init={this.props.init}
