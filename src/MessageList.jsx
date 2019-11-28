@@ -23,6 +23,7 @@ class MessageList extends Component {
             senderName={this.props.messages[c].senderName}
             //   onChange={this.props.onChange}
             //   value={this.props.value}
+            sender={this.props.sender}
             name={this.props.messages[c].message}
             //   status={this.props.stocks[c].status}
             //   delete={this.props.delete}

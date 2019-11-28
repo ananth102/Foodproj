@@ -12,8 +12,12 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import FeederScreen from "./FeederScreen";
+import SelectInput from "@material-ui/core/Select/SelectInput";
 
 let app;
+const sleep = milliseconds => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+};
 const useStyles = makeStyles({
   card: {
     minWidth: 275
@@ -75,8 +79,8 @@ class App extends Component {
     //console.log(classes;
 
     if (this.state.curr == 0) {
-      this.addFeeder("Koda", 1, "berk", 15, true);
-      this.addFeeder("Cooper", 2, "woosta", 13, true);
+      console.log("meow");
+      this.init();
     }
     console.log(this.state.currentMessages);
     if (this.state.viewMode && !this.state.feederScreen) {
@@ -185,8 +189,61 @@ class App extends Component {
     this.setState({ curr });
     this.setState({ feeders });
   };
+
   init = () => {
     /* get data from firebae */
+    console.log("in init");
+    if (!this.state.connected) {
+      app = firebase.initializeApp(this.state.firebasekey);
+      this.setState({ app });
+      let connected = true;
+      this.setState({ connected });
+      console.log("connected");
+    }
+
+    let database = firebase.database();
+    let dat;
+    database
+      .ref("feeders")
+      .once("value")
+      .then(snapshot => {
+        dat = snapshot.val();
+        //let feeders = dat;
+        //this.setState({fee})
+        //SelectInput()
+      });
+
+    sleep(200).then(() => {
+      console.log("Getting feeders", dat);
+      if (dat === undefined) {
+        sleep(500).then(() => {
+          //console.log(dat);
+          if (dat === undefined) {
+            this.addFeeder("Koda", 1, "berk", 15, true);
+            this.addFeeder("Cooper", 2, "woosta", 13, true);
+
+            database.ref("feeders").update({
+              feeders: this.state.feeders
+            });
+          } else {
+            console.log(dat);
+            let feeders = dat.feeders;
+            this.setState({ feeders });
+            let curr = feeders.length;
+            this.setState({ curr });
+          }
+        });
+
+        //console.log(this.state.feeders);
+      } else {
+        console.log(dat);
+        let feeders = dat.feeders;
+        this.setState({ feeders });
+        let curr = feeders.length;
+        this.setState({ curr });
+      }
+      //console.log("passed");
+    });
   };
 
   join = elem => {
