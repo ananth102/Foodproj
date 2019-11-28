@@ -10,9 +10,34 @@ import CardContent from "@material-ui/core/CardContent";
 import MessageList from "./MessageList";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import FeederScreen from "./FeederScreen";
 
 let app;
-let useStyles;
+const useStyles = makeStyles({
+  card: {
+    minWidth: 275
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)"
+  },
+  title: {
+    fontSize: 14
+  },
+  pos: {
+    marginBottom: 12
+  }
+});
+const SampleCard = () => {
+  const classes = useStyles();
+  return (
+    <Card className={classes.card}>
+      <h2>woof</h2>
+    </Card>
+  );
+};
 class App extends Component {
   state = {
     firebasekey: {
@@ -42,11 +67,12 @@ class App extends Component {
     currentMessageInBox: "",
     app: null,
     connected: false,
-    feederScreen: false
+    feederScreen: false,
+    name: ""
   };
 
   render() {
-    const classes = this.useStyles();
+    //console.log(classes;
 
     if (this.state.curr == 0) {
       this.addFeeder("Koda", 1, "berk", 15, true);
@@ -56,13 +82,23 @@ class App extends Component {
     if (this.state.viewMode && !this.state.feederScreen) {
       return (
         <div>
+          <h1>Welcome to FoodProj</h1>
+          <h3>
+            You can pair up with any of these guys or feed a student yourself.
+          </h3>
+
           <Button
+            text-align="center"
+            margin="0 auto"
             variant="contained"
             color="primary"
             onClick={this.becomeaFeeder}
           >
             Become a feeder
           </Button>
+          <h6></h6>
+          <h3>Before pairing up we would like to know your name.</h3>
+
           <Cardlist
             feeders={this.state.feeders}
             onClick={this.join}
@@ -82,9 +118,18 @@ class App extends Component {
             {this.state.feeders[this.state.currentElem].name}
           </h1>
           <React.Fragment>
-            <Card className={classes.card}>
-              <CardContent>woof</CardContent>
-            </Card>
+            {/* <Card className={classes.card}>
+              <CardContent>
+                <Typography
+                  className={classes.title}
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  Word of the Day
+                </Typography>
+              </CardContent>
+            </Card> */}
+            <SampleCard />
             <ul id="messageArea">
               <MessageList messages={this.state.currentMessages} />{" "}
             </ul>
@@ -119,7 +164,7 @@ class App extends Component {
     } else {
       return (
         <div>
-          <h1>Welcome to the feeder Screen</h1>
+          <FeederScreen />
         </div>
       );
     }
@@ -179,6 +224,7 @@ class App extends Component {
         }
       });
   };
+
   createNewId = (database, id) => {
     database.ref("test/" + id).set({
       messages: null
@@ -219,24 +265,36 @@ class App extends Component {
     this.setState({ feederScreen });
   };
 
-  useStyles = () => {
-    return makeStyles({
-      card: {
-        minWidth: 275
-      },
-      bullet: {
-        display: "inline-block",
-        margin: "0 2px",
-        transform: "scale(0.8)"
-      },
-      title: {
-        fontSize: 14
-      },
-      pos: {
-        marginBottom: 12
-      }
-    });
-  };
+  namePrompt() {
+    return (
+      <div>
+        <TextField onChange="" label="Name"></TextField>
+        <Button variant="contained" color="primary">
+          Submit Name
+        </Button>
+      </div>
+    );
+  }
 }
+
+//   useStyles = () => {
+//     return makeStyles({
+//       card: {
+//         minWidth: 275
+//       },
+//       bullet: {
+//         display: "inline-block",
+//         margin: "0 2px",
+//         transform: "scale(0.8)"
+//       },
+//       title: {
+//         fontSize: 14
+//       },
+//       pos: {
+//         marginBottom: 12
+//       }
+//     });
+//   };
+// }
 
 export default App;
