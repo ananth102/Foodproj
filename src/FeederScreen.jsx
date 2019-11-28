@@ -7,10 +7,13 @@ class FeederScreen extends Component {
     return (
       <React.Fragment>
         <h1>Welcome to the feeder Screen</h1>
-        <TextField onChange="" label="Name"></TextField>
-        <TextField onChange="" label="Prefered Dining Hall"></TextField>
+        <TextField onChange={this.props.name} label="Name"></TextField>
+        <TextField
+          onChange={this.props.diningHall}
+          label="Prefered Dining Hall"
+        ></TextField>
         <h1></h1>
-        <Button onClick="" variant="contained" color="Secondary">
+        <Button onClick={this.props.oc} variant="contained" color="Secondary">
           Submit
         </Button>
       </React.Fragment>

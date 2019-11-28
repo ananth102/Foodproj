@@ -21,7 +21,7 @@ class Cardlist extends Component {
           onClick={this.props.onClick}
           join={this.props.join}
           // value={this.props.value}
-          name={this.props.feeders[c].location}
+          name={this.props.feeders[c].name}
           mealCount={this.props.feeders[c].mealCount}
           //   status={this.props.stocks[c].status}
           //   delete={this.props.delete}

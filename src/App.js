@@ -42,6 +42,7 @@ const SampleCard = () => {
     </Card>
   );
 };
+
 class App extends Component {
   state = {
     firebasekey: {
@@ -72,14 +73,14 @@ class App extends Component {
     app: null,
     connected: false,
     feederScreen: false,
-    name: ""
+    name: "",
+    feederScreenInput: { name: "", din: "" }
   };
 
   render() {
     //console.log(classes;
 
     if (this.state.curr == 0) {
-      console.log("meow");
       this.init();
     }
     console.log(this.state.currentMessages);
@@ -168,7 +169,11 @@ class App extends Component {
     } else {
       return (
         <div>
-          <FeederScreen />
+          <FeederScreen
+            name={this.onFeederScreenChange}
+            diningHall={this.onFeederScreenChange2}
+            oc={this.onFeederScreenClick}
+          />
         </div>
       );
     }
@@ -198,7 +203,7 @@ class App extends Component {
       this.setState({ app });
       let connected = true;
       this.setState({ connected });
-      console.log("connected");
+      //console.log("connected");
     }
 
     let database = firebase.database();
@@ -214,7 +219,7 @@ class App extends Component {
       });
 
     sleep(200).then(() => {
-      console.log("Getting feeders", dat);
+      // console.log("Getting feeders", dat);
       if (dat === undefined) {
         sleep(500).then(() => {
           //console.log(dat);
@@ -226,7 +231,7 @@ class App extends Component {
               feeders: this.state.feeders
             });
           } else {
-            console.log(dat);
+            // console.log(dat);
             let feeders = dat.feeders;
             this.setState({ feeders });
             let curr = feeders.length;
@@ -259,7 +264,7 @@ class App extends Component {
       this.setState({ app });
       let connected = true;
       this.setState({ connected });
-      console.log("connected");
+      //console.log("connected");
     }
     let database = firebase.database();
     let currentMessages;
@@ -295,7 +300,7 @@ class App extends Component {
       this.setState({ app });
       let connected = true;
       this.setState({ connected });
-      console.log("connected");
+      //console.log("connected");
     }
     //console.log(app);
     let database = app.database();
@@ -332,26 +337,46 @@ class App extends Component {
       </div>
     );
   }
-}
+  hashCode = function(s) {
+    return s.split("").reduce(function(a, b) {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+  };
 
-//   useStyles = () => {
-//     return makeStyles({
-//       card: {
-//         minWidth: 275
-//       },
-//       bullet: {
-//         display: "inline-block",
-//         margin: "0 2px",
-//         transform: "scale(0.8)"
-//       },
-//       title: {
-//         fontSize: 14
-//       },
-//       pos: {
-//         marginBottom: 12
-//       }
-//     });
-//   };
-// }
+  onFeederScreenChange = event => {
+    //console.log(event.target.value);
+    let feederScreenInput = {
+      name: event.target.value,
+      din: this.state.feederScreenInput.din
+    };
+    this.setState({ feederScreenInput });
+  };
+  onFeederScreenChange2 = event => {
+    //console.log(event.target.value);
+    let feederScreenInput = {
+      name: this.state.feederScreenInput.name,
+      din: event.target.value
+    };
+    this.setState({ feederScreenInput });
+    //console.log(feederScreenInput);
+  };
+  onFeederScreenClick = () => {
+    /*
+    Pushes a new feeder to firebae
+    */
+    let database = firebase.database();
+    this.addFeeder(
+      this.state.feederScreenInput.name,
+      this.state.curr++,
+      this.state.feederScreenInput.din,
+      5,
+      true
+    );
+    database.ref("feeders").update({
+      feeders: this.state.feeders
+    });
+  };
+}
 
 export default App;
