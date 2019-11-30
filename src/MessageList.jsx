@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import Message from "./Message";
 class MessageList extends Component {
   render() {
+    // console.log(this.props.mes)
     return (
       <div class="container">
         <div class="coloumn">{this.setNumberMessages()}</div>
@@ -23,7 +24,7 @@ class MessageList extends Component {
             senderName={this.props.messages[c].senderName}
             //   onChange={this.props.onChange}
             //   value={this.props.value}
-            sender={this.props.sender}
+            //sender={this.props.sender}
             name={this.props.messages[c].message}
             //   status={this.props.stocks[c].status}
             //   delete={this.props.delete}

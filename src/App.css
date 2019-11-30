@@ -39,3 +39,8 @@ p {
   display: inline-block;
   margin: 20px 50px;
 }
+
+#nme {
+  padding: 12px;
+  width: 30%;
+}

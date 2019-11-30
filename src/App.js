@@ -14,6 +14,28 @@ import Typography from "@material-ui/core/Typography";
 import FeederScreen from "./FeederScreen";
 import SelectInput from "@material-ui/core/Select/SelectInput";
 
+/**
+ * TODO
+ * Commit 1
+ * almost there just fix the way currentelement is handled
+ * refractor code before uploading to github
+ *
+ * Commit 2
+ * Simple Login system will be added for feeders
+ * more refractoring
+ *
+ * Commit 3
+ * Big ui improvements
+ * big refractoring of chat screen by making it its own component
+ *
+ * Commit 4
+ * Improve the way data is stored
+ * possibly integrate redux
+ *
+ * Commit 5x plus
+ * extra flex features
+ */
+
 let app;
 const sleep = milliseconds => {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -38,7 +60,7 @@ const SampleCard = () => {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
-      <h2>woof</h2>
+      <h2></h2>
     </Card>
   );
 };
@@ -67,7 +89,7 @@ class App extends Component {
     feeders: [],
     curr: 0,
     viewMode: true,
-    currentElem: -1,
+    currentElem: -1, //convo id
     currentMessages: [],
     currentMessageInBox: "",
     app: null,
@@ -79,11 +101,11 @@ class App extends Component {
 
   render() {
     //console.log(classes;
-
+    console.log(this.state.viewMode);
     if (this.state.curr == 0) {
       this.init();
     }
-    console.log(this.state.currentMessages);
+    //console.log(this.state.currentMessages);
     if (this.state.viewMode && !this.state.feederScreen) {
       return (
         <div>
@@ -120,53 +142,46 @@ class App extends Component {
         <div>
           <h1>
             Welcome to the Chatroom, You are paired up with{" "}
-            {this.state.feeders[this.state.currentElem].name}
+            {this.state.feeders[this.state.currentElem - 1].name}
           </h1>
           <React.Fragment>
-            {/* <Card className={classes.card}>
-              <CardContent>
-                <Typography
-                  className={classes.title}
-                  color="textSecondary"
-                  gutterBottom
-                >
-                  Word of the Day
-                </Typography>
-              </CardContent>
-            </Card> */}
-            <SampleCard />
             <ul id="messageArea">
               <MessageList messages={this.state.currentMessages} />{" "}
             </ul>
-            <TextField
-              type="text"
-              //onChange={this.props.onChange}
-              name="name"
-              class="question"
-              id="nme"
-              required
-              autocomplete="off"
-              onChange={this.userChange}
-            />
-            <label for="nme">
-              <span></span>
-            </label>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() =>
-                this.sendMessage(
-                  this.state.currentElem,
-                  this.state.currentMessageInBox
-                )
-              }
-            >
-              send
-            </Button>
+            <div style={{ display: "inline-block" }}>
+              <TextField
+                type="text"
+                //onChange={this.props.onChange}
+                name="name"
+                class="question"
+                id="nme"
+                required
+                autocomplete="off"
+                onChange={this.userChange}
+                style={{ margin: "0px 90px" }}
+                inline
+              />
+              <label for="nme">
+                <span></span>
+              </label>
+              <Button
+                variant="contained"
+                inline
+                color="primary"
+                onClick={() =>
+                  this.sendMessage(
+                    this.state.currentElem,
+                    this.state.currentMessageInBox
+                  )
+                }
+              >
+                send
+              </Button>
+            </div>
           </React.Fragment>
         </div>
       );
-    } else {
+    } else if (!this.state.viewMode) {
       return (
         <div>
           <FeederScreen
@@ -176,6 +191,111 @@ class App extends Component {
           />
         </div>
       );
+    } else {
+      //We know that this is the feeder's chat view
+      //if student is here return chat
+
+      window.setInterval(() => {
+        this.getMessages(this.state.currentElem);
+        console.log(this.state.currentElem);
+        console.log("message_length", this.state.currentMessages.length);
+        if (this.state.currentMessages.length != 0) {
+          return (
+            <div>
+              <h1>
+                Welcome to the Chatroom, You paired up with a student
+                {this.state.feeders[this.state.currentElem - 1].name}
+              </h1>
+              <React.Fragment>
+                <ul id="messageArea">
+                  <MessageList messages={this.state.currentMessages} />{" "}
+                </ul>
+                <div style={{ display: "inline-block" }}>
+                  <TextField
+                    type="text"
+                    //onChange={this.props.onChange}
+                    name="name"
+                    class="question"
+                    id="nme"
+                    required
+                    autocomplete="off"
+                    onChange={this.userChange}
+                    style={{ margin: "0px 90px" }}
+                    inline
+                  />
+                  <label for="nme">
+                    <span></span>
+                  </label>
+                  <Button
+                    variant="contained"
+                    inline
+                    color="primary"
+                    onClick={() =>
+                      this.sendMessage(
+                        this.state.currentElem,
+                        this.state.currentMessageInBox
+                      )
+                    }
+                  >
+                    send
+                  </Button>
+                </div>
+              </React.Fragment>
+            </div>
+          );
+        } else {
+          return <h1>Waiting for student</h1>;
+        }
+      }, 1000);
+    }
+    if (this.state.viewMode && this.state.feederScreen) {
+      if (this.state.currentMessages.length != 0) {
+        return (
+          <div>
+            <h1>
+              Welcome to the Chatroom, You paired up with a student
+              {this.state.feeders[this.state.currentElem - 1].name}
+            </h1>
+            <React.Fragment>
+              <ul id="messageArea">
+                <MessageList messages={this.state.currentMessages} />{" "}
+              </ul>
+              <div style={{ display: "inline-block" }}>
+                <TextField
+                  type="text"
+                  //onChange={this.props.onChange}
+                  name="name"
+                  class="question"
+                  id="nme"
+                  required
+                  autocomplete="off"
+                  onChange={this.userChange}
+                  style={{ margin: "0px 90px" }}
+                  inline
+                />
+                <label for="nme">
+                  <span></span>
+                </label>
+                <Button
+                  variant="contained"
+                  inline
+                  color="primary"
+                  onClick={() =>
+                    this.sendMessage(
+                      this.state.currentElem,
+                      this.state.currentMessageInBox
+                    )
+                  }
+                >
+                  send
+                </Button>
+              </div>
+            </React.Fragment>
+          </div>
+        );
+      } else {
+        return <h1>Waiting for student</h1>;
+      }
     }
   }
   //adds a new feeder to the element
@@ -196,7 +316,9 @@ class App extends Component {
   };
 
   init = () => {
+    let conn = false;
     /* get data from firebae */
+
     console.log("in init");
     if (!this.state.connected) {
       app = firebase.initializeApp(this.state.firebasekey);
@@ -218,24 +340,25 @@ class App extends Component {
         //SelectInput()
       });
 
-    sleep(200).then(() => {
-      // console.log("Getting feeders", dat);
-      if (dat === undefined) {
-        sleep(500).then(() => {
+    setTimeout(() => {
+      if (dat === undefined || dat === null) {
+        sleep(100).then(() => {
           //console.log(dat);
-          if (dat === undefined) {
-            this.addFeeder("Koda", 1, "berk", 15, true);
+          if (dat === undefined || dat == null) {
+            //this.addFeeder("Koda", 1, "berk", 15, true);
             this.addFeeder("Cooper", 2, "woosta", 13, true);
 
             database.ref("feeders").update({
               feeders: this.state.feeders
             });
+            return;
           } else {
             // console.log(dat);
             let feeders = dat.feeders;
             this.setState({ feeders });
             let curr = feeders.length;
             this.setState({ curr });
+            return;
           }
         });
 
@@ -246,14 +369,14 @@ class App extends Component {
         this.setState({ feeders });
         let curr = feeders.length;
         this.setState({ curr });
+        return;
       }
-      //console.log("passed");
-    });
+    }, 1000);
   };
 
   join = elem => {
     let viewMode = false;
-    let currentElem = elem;
+    let currentElem = elem + 1;
     this.setState({ viewMode });
     this.setState({ currentElem });
   };
@@ -307,9 +430,12 @@ class App extends Component {
 
     let currentMessages = this.state.currentMessages;
     //console.log(this.state.currentMessageInBox);
+    let sendN = this.state.feederScreen
+      ? this.state.feederScreenInput.name
+      : "student";
     currentMessages.push({
-      message: "You :" + this.state.currentMessageInBox,
-      senderName: "foodneeder"
+      message: this.state.currentMessageInBox,
+      senderName: sendN
     });
     this.setState({ currentMessages });
     database.ref("test/" + id).update({
@@ -324,6 +450,8 @@ class App extends Component {
   //formatMessages = () => {};
   becomeaFeeder = () => {
     let feederScreen = true;
+    let viewMode = false;
+    this.setState({ viewMode });
     this.setState({ feederScreen });
   };
 
@@ -364,6 +492,8 @@ class App extends Component {
   onFeederScreenClick = () => {
     /*
     Pushes a new feeder to firebae
+    //change interface to chat ->
+      -> Work on chat interface first
     */
     let database = firebase.database();
     this.addFeeder(
@@ -376,6 +506,56 @@ class App extends Component {
     database.ref("feeders").update({
       feeders: this.state.feeders
     });
+    let viewMode = true;
+    let currentElem = this.state.curr;
+    this.setState({ viewMode });
+    this.setState({ currentElem });
+  };
+
+  getChatView = () => {
+    return (
+      <div>
+        <h1>
+          Welcome to the Chatroom, You are paired up with{" "}
+          {this.state.feeders[this.state.currentElem].name}
+        </h1>
+        <React.Fragment>
+          <ul id="messageArea">
+            <MessageList messages={this.state.currentMessages} />{" "}
+          </ul>
+          <div style={{ display: "inline-block" }}>
+            <TextField
+              type="text"
+              //onChange={this.props.onChange}
+              name="name"
+              class="question"
+              id="nme"
+              required
+              autocomplete="off"
+              onChange={this.userChange}
+              style={{ margin: "0px 90px" }}
+              inline
+            />
+            <label for="nme">
+              <span></span>
+            </label>
+            <Button
+              variant="contained"
+              inline
+              color="primary"
+              onClick={() =>
+                this.sendMessage(
+                  this.state.currentElem,
+                  this.state.currentMessageInBox
+                )
+              }
+            >
+              send
+            </Button>
+          </div>
+        </React.Fragment>
+      </div>
+    );
   };
 }
 
